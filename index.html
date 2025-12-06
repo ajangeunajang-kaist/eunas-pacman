@@ -7,19 +7,25 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-      body {
+      * {
         margin: 0;
         padding: 0;
+      }
+      html, body {
+        width: 100%;
+        height: 100%;
         overflow: hidden;
       }
       #unity-container {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
       }
       #unity-canvas {
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
         display: block;
       }
       #unity-loading-bar {
@@ -27,6 +33,7 @@
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
+        z-index: 1000;
       }
     </style>
   </head>
@@ -67,6 +74,14 @@
         updateBannerVisibility();
       }
 
+      // 캔버스 리사이즈 함수
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+      }
+
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/euna_pacman.loader.js";
       var config = {
@@ -96,12 +111,14 @@
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                loadingBar.style.display = "none";
-              }).catch((message) => {
-                alert(message);
-              });
-            };
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+          resizeCanvas();
+          window.addEventListener('resize', resizeCanvas);
+        }).catch((message) => {
+          alert(message);
+        });
+      };
 
       document.body.appendChild(script);
 
